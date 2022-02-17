@@ -23,7 +23,7 @@ const UPDATE_USER = `
     phone_number = updateIFChanged($3, phone_number),
     age = updateIFChanged($4, age),
     step = updateIFChanged($5, step),
-    rome = updateIFChanged($6, step)
+    role = updateIFChanged($6, role)
     WHERE chat_id = $1
     RETURNING *
 `;
@@ -38,6 +38,7 @@ const getOne = (chatId) => fetch(GET_USER, chatId);
 const getAll = () => fetchAll(GET_USERS);
 const create = (chatId) =>  fetch(CREATE_USER, chatId);
 const updateOne = (chatId, username, phoneNumber, age, step, role) => fetch(
+    UPDATE_USER,
     chatId, username,
     phoneNumber, age,
     step, role
