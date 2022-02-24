@@ -1,4 +1,5 @@
 const UserValidator = require("../validators/users");
+const Comments = require('../models/Comments');
 const Users = require("../models/Users");
 const buttons = require('../lib/buttons');
 
@@ -70,9 +71,9 @@ const step3 = async (bot, message) => {
 }
 
 const step4 = async (bot, message) => {
+    const chatId = message.from.id;
+    const text = message.text;
     try {
-        const chatId = message.from.id;
-        const text = message.text;
         if (text === `CV jo'natish`) {
             await Users.updateOne(chatId, null, null, null, 5);
 
@@ -81,8 +82,8 @@ const step4 = async (bot, message) => {
             });
 
             return;
-        } else if (text === 'Fikr bildirish') {
-            await Users.updateOne(user.chat_id, null, null, null, 8);
+        } else if (text === 'Izoh bildirish') {
+            await Users.updateOne(chatId, null, null, null, 8);
 
             bot.sendMessage(chatId, 'Hurmatli foydalanuvchi fikringizni bildiring', {
                 reply_markup: buttons.backButton
@@ -109,7 +110,7 @@ const step5 = async (bot, message) => {
             });
         } else if (text === `Text ko'rinishida`) {
             await Users.updateOne(chatId, null, null, null, 7);
-            bot.sendMessage(chatId, `Cvtingizni yozma ravishda kiriting`, {
+            bot.sendMessage(chatId, `Cvtingizni yozma ravishda kiriting. CV yozma ko'rinishing uzunligi kamida 100 belgi bo'lishi kerak`, {
                 reply_markup: buttons.backButton
             });
         } else if (text === '⬅️ Orqaga') {
@@ -140,8 +141,10 @@ const step6 = async (bot, message) => {
                     reply_markup: buttons.backButton
                 });
             } else {
-                const fileLink = await bot.getFileLink(message.document.file_id);
-                await Users.updateOne(chatId, null, null, null, 4, null, fileLink);
+                await Users.updateOne(
+                    chatId, null, null, null, 4,
+                    null, message.document.file_id
+                );
 
                 bot.sendMessage(chatId, `Sizni CV qabul qilindi. Tez orada aloqaga chiqamiz!`, {
                     reply_markup: buttons.menuButton
@@ -154,11 +157,67 @@ const step6 = async (bot, message) => {
     }
 }
 
+
+const step7 = async (bot, message) => {
+    const chatId = message.from.id;
+    const text = message.text;
+    try {
+        if (text === '⬅️ Orqaga') {
+            await Users.updateOne(chatId, null, null, null, 5);
+
+            bot.sendMessage(chatId, `Iltimos cv jo'natish turini tanglang`, {
+                reply_markup: buttons.cvButton
+            });
+        } else if (!text || text.length < 100) {
+            bot.sendMessage(
+                chatId, 
+                `CV ni yozma ko'rinishini noto'g'ri jo'natdingiz. Iltimos CV to'g'ri kiriting.CVning uzunligi kamida 100ta belgi bo'lishi kerak`
+            )
+        }else {
+            await Users.updateOne(chatId, null, null, null, 4, null, null, text);
+
+            bot.sendMessage(chatId, `Sizni CV qabul qilindi. Tez orada aloqaga chiqamiz!`, {
+                reply_markup: buttons.menuButton
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        bot.sendMessage(chatId, 'Botda nosozlik bo`ldi, Iltimos bot adminlariga murojat qiling!');
+    }
+}
+
+
+const step8 = async (bot, message) => {
+    const chatId = message.from.id;
+    const text = message.text;
+    try {
+        if (text === '⬅️ Orqaga') {
+            await Users.updateOne(chatId, null, null, null, 4);
+
+            bot.sendMessage(chatId, `Iltimos cv jo'natish turini tanglang`, {
+                reply_markup: buttons.menuButton
+            });
+        }else if(!text) {
+            bot.sendMessage(chatId, `Iltimos izohingizni yozma ko'rinishda kiriting`);
+        }else {
+            await Comments.create(text, chatId);
+            await Users.updateOne(chatId, null, null, null, 4);
+            bot.sendMessage(chatId, `Sizning izohingiz qabul qilindi. izoh uchun rahmat. Biz tez orada aloqaga chiqamiz`, {
+                reply_markup: buttons.menuButton
+            });
+        }
+    } catch(error) {
+        console.log(error);
+        bot.sendMessage(chatId, 'Botda nosozlik bo`ldi, Iltimos bot adminlariga murojat qiling!');
+    }
+}
 module.exports = {
     step1,
     step2,
     step3,
     step4,
     step5,
-    step6
+    step6,
+    step7,
+    step8
 } 

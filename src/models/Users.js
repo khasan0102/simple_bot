@@ -31,7 +31,8 @@ const UPDATE_USER = `
     age = updateIFChanged($4, age),
     step = updateIFChanged($5, step),
     role = updateIFChanged($6, role),
-    user_cv = updateIFChanged($7, user_cv)
+    user_cv = updateIFChanged($7, user_cv),
+    user_description = updateIFChanged($8, user_description)
     WHERE chat_id = $1
     RETURNING *
 `;
@@ -45,12 +46,14 @@ const DELETE_USER = `
 const getOne = (chatId) => fetch(GET_USER, chatId);
 const getAll = () => fetchAll(GET_USERS);
 const create = (chatId) =>  fetch(CREATE_USER, chatId);
-const updateOne = (chatId, username, phoneNumber, age, step, role, user_cv = null) => fetch(
+const updateOne = (chatId, username, phoneNumber, age, step, role, user_cv = null, user_desc = null) => fetch(
     UPDATE_USER,
     chatId, username,
     phoneNumber, age,
-    step, role, user_cv
+    step, role, user_cv,
+    user_desc
 );
+
 const deleteOne = (chatId) => fetch(DELETE_USER, chatId);
 
 module.exports = {

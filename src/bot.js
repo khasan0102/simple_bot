@@ -43,6 +43,12 @@ bot.on('message', async (msg) => {
          case 6:
             StepController.step6(bot, msg);
             break;
+         case 7:
+            StepController.step7(bot, msg);
+            break;
+         case 8:
+            StepController.step8(bot, msg);
+            break;
       }
    }
 });
