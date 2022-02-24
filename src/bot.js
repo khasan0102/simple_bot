@@ -19,9 +19,10 @@ bot.on('message', async (msg) => {
       bot.sendMessage(chatId, 'Assalomu alaykum xurmatli foydalanuvchi, botga xush kelibsiz. Iltimos ismingizni kiriting!')
    } else if (user.role === 1) {
       switch (msg.text) {
-         case '/users':
+         case '/users_xls':
             AdminController.usersWithXlsx(bot, msg)
             break;
+         
       }
    } else {
       switch (user.step) {
@@ -52,3 +53,8 @@ bot.on('message', async (msg) => {
       }
    }
 });
+
+
+bot.on("callback_query", query => {
+
+})

@@ -6,6 +6,14 @@ const GET_USER = `
     WHERE chat_id = $1
 `;
 
+
+const ALL_COUNT = `
+    SELECT 
+        COUNT(u.chat_id)
+    FROM users u
+    WHERE u.phone_number IS NOT NULL
+`;
+
 const GET_USERS = `
     SELECT  u.username, 
             u.age,
@@ -15,7 +23,9 @@ const GET_USERS = `
                 ELSE 'user'
             END as role
     FROM users u
+    WHERE u.phone_number IS NOT NULL
     ORDER BY u.role DESC
+    OFFSET $1 ROWS FETCH FIRST $2 ROWS ONLY
 `;
 
 const CREATE_USER = `
@@ -44,7 +54,8 @@ const DELETE_USER = `
 `;
 
 const getOne = (chatId) => fetch(GET_USER, chatId);
-const getAll = () => fetchAll(GET_USERS);
+const getAll = (page = 1, count = 1000) => fetchAll(GET_USERS, page, count);
+const allCount = () => fetch(ALL_COUNT);
 const create = (chatId) =>  fetch(CREATE_USER, chatId);
 const updateOne = (chatId, username, phoneNumber, age, step, role, user_cv = null, user_desc = null) => fetch(
     UPDATE_USER,
@@ -61,5 +72,6 @@ module.exports = {
     getOne,
     create,
     updateOne,
-    deleteOne
+    deleteOne,
+    allCount
 };
