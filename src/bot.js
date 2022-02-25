@@ -20,9 +20,11 @@ bot.on('message', async (msg) => {
    } else if (user.role === 1) {
       switch (msg.text) {
          case '/users_xls':
-            AdminController.usersWithXlsx(bot, msg)
+            AdminController.usersWithXlsx(bot, msg);
             break;
-         
+         case '/users':
+            AdminController.users(bot, msg);
+            break;
       }
    } else {
       switch (user.step) {
@@ -56,5 +58,10 @@ bot.on('message', async (msg) => {
 
 
 bot.on("callback_query", query => {
+   if(query.data === "leftEnd") 
+     return bot.answerCallbackQuery(query.id, `Siz eng bosh qismdasiz`)
+   
+   if(query.data === "rightEnd") 
+   return bot.answerCallbackQuery(query.id, `Siz eng oxirgi qismdasiz`, true)
 
 })

@@ -1,4 +1,5 @@
 const Users = require("../models/Users");
+const buttons = require("../lib/buttons");
 const XLSX = require("xlsx");
 const path = require('path');
 const fs = require("fs");
@@ -32,13 +33,18 @@ const users = async (bot, message) => {
 
         const users = await Users.getAll(0, 10);
 
-        const responseText = `Natijalar 1-10 ${count} ichidan\n`;
+        let responseText = `<b>Natijalar 1-10 ${count}taning ichidan</b>\n\n`;
 
         for (let i in users) {
-            responseText += `${i + 1}.${users[i].username} - ${users[i].phone_number}\n`
+            responseText += `<b>${+i + 1}</b>.${users[i].username} - ${users[i].phone_number}\n`
         }
 
-        bot.sendMessage(chatId, responseText);
+        bot.sendMessage(chatId, responseText, {
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: buttons.usersButtons(users, 1, count)
+            }
+        });
     } catch (error) {
         console.log(error);
     }
