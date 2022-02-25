@@ -33,7 +33,7 @@ const users = async (bot, message) => {
 
         const users = await Users.getAll(0, 10);
 
-        let responseText = `<b>Natijalar 1-10 ${count}taning ichidan</b>\n\n`;
+        let responseText = `<b>Natijalar 1-${users.length} ${count}taning ichidan</b>\n\n`;
 
         for (let i in users) {
             responseText += `<b>${+i + 1}</b>.${users[i].username} - ${users[i].phone_number}\n`
@@ -42,7 +42,7 @@ const users = async (bot, message) => {
         bot.sendMessage(chatId, responseText, {
             parse_mode: "HTML",
             reply_markup: {
-                inline_keyboard: buttons.usersButtons(users, 1, count)
+                inline_keyboard: buttons.usersButtons(users, 0, count)
             }
         });
     } catch (error) {
@@ -51,8 +51,37 @@ const users = async (bot, message) => {
 }
 
 
+const usersPagination = async (bot, query, page) => {
+    try {
+        const chatId = query.message.chat.id;
+        const messageId = query.message.message_id;
+
+        const { count } = await Users.allCount();
+        const users = await Users.getAll(page * 10, 10);
+        const start = page * 10;
+
+        let responseText = `<b>Natijalar ${start + 1}-${start + users.length} ${count}taning ichidan</b>\n\n`;
+
+        for (let i in users) {
+            responseText += `<b>${+i + 1}</b>.${users[i].username} - ${users[i].phone_number}\n`
+        }
+
+        bot.editMessageText(responseText, {
+            chat_id: chatId,
+            message_id: messageId,
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: buttons.usersButtons(users, page, count)
+            }
+        })
+    } catch(error) {
+        console.log(error);
+    }
+}
+
 
 module.exports = {
     usersWithXlsx,
-    users
+    users,
+    usersPagination
 }

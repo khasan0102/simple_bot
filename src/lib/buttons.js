@@ -61,7 +61,7 @@ module.exports = {
             if(i < 5) {
                 first.push({
                     callback_data: `${users[i].chat_id}/user`,
-                    text: `${i + 1}`
+                    text: `${+i + 1}`
                 })
             }else {
                 second.push({
@@ -71,8 +71,8 @@ module.exports = {
             }
         };
 
-        const leftData = page !== 1 ? `${page - 1}/leftData` : 'leftEnd';
-        const rightData = page > Math.ceil(allCount / 10) ? `${page + 1}/rightData` : 'rightEnd'
+        const leftData = page > 0 ? `${page - 1}/data` : 'leftEnd';
+        const rightData = page < Math.ceil(allCount / 10) - 1 ? `${page + 1}/data` : 'rightEnd'
 
         return [
             first,

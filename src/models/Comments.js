@@ -18,7 +18,7 @@ const CREATE = `
     RETURNING *;
 `;
 
-const create = (commentV , chat_id) =>  fetch(CREATE, comment, chat_id);
+const create = (comment , chat_id) =>  fetch(CREATE, comment, chat_id);
 module.exports = {
     create
 }

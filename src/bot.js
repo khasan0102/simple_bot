@@ -59,9 +59,16 @@ bot.on('message', async (msg) => {
 
 bot.on("callback_query", query => {
    if(query.data === "leftEnd") 
-     return bot.answerCallbackQuery(query.id, `Siz eng bosh qismdasiz`)
+     return bot.answerCallbackQuery(query.id, `Siz eng bosh qismdasiz`);
    
    if(query.data === "rightEnd") 
-   return bot.answerCallbackQuery(query.id, `Siz eng oxirgi qismdasiz`, true)
+      return bot.answerCallbackQuery(query.id, `Siz eng oxirgi qismdasiz`);
+   
+   if(query.data === 'delete') 
+      return bot.deleteMessage(query.message.chat.id, query.message.message_id);
 
+   if(query.data.search('data')) 
+     return AdminController.usersPagination(bot, query, query.data.slice(0, -5))
+   
 })
+

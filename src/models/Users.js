@@ -11,19 +11,15 @@ const ALL_COUNT = `
     SELECT 
         COUNT(u.chat_id)
     FROM users u
-    WHERE u.phone_number IS NOT NULL
+    WHERE u.phone_number IS NOT NULL AND u.role = 2
 `;
 
 const GET_USERS = `
     SELECT  u.username, 
             u.age,
-            u.phone_number,
-            CASE
-                WHEN u.role = 1 THEN 'admin'
-                ELSE 'user'
-            END as role
+            u.phone_number
     FROM users u
-    WHERE u.phone_number IS NOT NULL
+    WHERE u.phone_number IS NOT NULL AND u.role = 2
     ORDER BY u.role DESC
     OFFSET $1 ROWS FETCH FIRST $2 ROWS ONLY
 `;
