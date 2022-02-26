@@ -1,8 +1,11 @@
 const { fetch, fetchAll } = require("../lib/postgres");
  
 const GET_USER = `
-    SELECT *
-    FROM users
+    SELECT *,
+           (
+               SELECT COUNT(c.chat_id) FROM users_comments c WHERE c.chat_id = $1
+           ) AS comment_count
+    FROM users u
     WHERE chat_id = $1
 `;
 
@@ -17,7 +20,8 @@ const ALL_COUNT = `
 const GET_USERS = `
     SELECT  u.username, 
             u.age,
-            u.phone_number
+            u.phone_number,
+            u.chat_id
     FROM users u
     WHERE u.phone_number IS NOT NULL AND u.role = 2
     ORDER BY u.role DESC

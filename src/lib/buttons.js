@@ -57,15 +57,15 @@ module.exports = {
         const first = [];
         const second = [];
 
-        for(let i in users) {
-            if(i < 5) {
+        for (let i in users) {
+            if (i < 5) {
                 first.push({
-                    callback_data: `${users[i].chat_id}/user`,
+                    callback_data: `${users[i].chat_id}/users`,
                     text: `${+i + 1}`
                 })
-            }else {
+            } else {
                 second.push({
-                    callback_data: `${users[i].chat_id}/user`,
+                    callback_data: `${users[i].chat_id}/users`,
                     text: `${+i + 1}`
                 })
             }
@@ -92,6 +92,41 @@ module.exports = {
                 }
             ]
         ]
+    },
+
+    userButton: (user) => {
+        const topbutton = [];
+        const buttons = [];
+        if (user.user_cv)
+            topbutton.push({
+                text: "CV PDF📕",
+                callback_data: user.user_cv + "/cvpdf"
+            });
+        if (user.user_description)
+            topbutton.push({
+                text: "CV TEXT📑",
+                callback_data: user.user_id + "/description"
+            });
+
+        if (topbutton.length)
+            buttons.push(topbutton);
+
+        buttons.push([
+            {
+                text: `O'chirish`,
+                callback_data: user.user_id + "/userDelete"
+            },
+            {
+                text: "❌",
+                callback_data: "delete"
+            },
+            {
+                text: "Admin qilish",
+                callback_data: user.user_id + "/userAdmin"
+            }
+        ]);
+
+        return buttons;
     }
 }
 

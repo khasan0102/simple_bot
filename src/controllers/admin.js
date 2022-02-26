@@ -80,8 +80,32 @@ const usersPagination = async (bot, query, page) => {
 }
 
 
+const user = async (bot, query, chatId) => {
+    try {
+        console.log(chatId)
+        const user = await Users.getOne(chatId);
+
+        const responseText = `
+            Ism: ${user.username}
+            Yosh: ${user.age}
+            Telefon: ${user.phone_number}
+            CV_PDF: ${user.user_cv ? 'Bor': "Yo'q"}
+            CV_TEXT: ${user.user_description ? 'Bor': "Yo'q"}
+        `;
+
+        bot.sendMessage(query.message.chat.id, responseText, {
+            reply_markup: {
+                inline_keyboard: buttons.userButton(users)
+            }
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
+    usersPagination,
     usersWithXlsx,
     users,
-    usersPagination
+    user
 }

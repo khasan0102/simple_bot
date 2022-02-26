@@ -67,8 +67,11 @@ bot.on("callback_query", query => {
    if(query.data === 'delete') 
       return bot.deleteMessage(query.message.chat.id, query.message.message_id);
 
-   if(query.data.search('data')) 
+   if(query.data.search('data') > 0) 
      return AdminController.usersPagination(bot, query, query.data.slice(0, -5))
    
+   query.data.slice(0, -6)
+   // if(query.data.search('users'))
+   //    return AdminController.user(bot, query, )
 })
 
