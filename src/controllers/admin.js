@@ -74,7 +74,7 @@ const usersPagination = async (bot, query, page) => {
                 inline_keyboard: buttons.usersButtons(users, page, count)
             }
         })
-    } catch(error) {
+    } catch (error) {
         console.log(error);
     }
 }
@@ -82,30 +82,56 @@ const usersPagination = async (bot, query, page) => {
 
 const user = async (bot, query, chatId) => {
     try {
-        console.log(chatId)
         const user = await Users.getOne(chatId);
 
+        console.log(user);
         const responseText = `
-            Ism: ${user.username}
-            Yosh: ${user.age}
-            Telefon: ${user.phone_number}
-            CV_PDF: ${user.user_cv ? 'Bor': "Yo'q"}
-            CV_TEXT: ${user.user_description ? 'Bor': "Yo'q"}
+            Ism: ${user.username}\nYosh: ${user.age}\nTelefon: ${user.phone_number}\nCV_PDF: ${user.user_cv ? 'Bor' : "Yo'q"}\nCV_TEXT: ${user.user_description ? 'Bor' : "Yo'q"}\nKomenetlar soni: ${user.comment_count}
         `;
 
         bot.sendMessage(query.message.chat.id, responseText, {
             reply_markup: {
-                inline_keyboard: buttons.userButton(users)
+                inline_keyboard: buttons.userButton(user)
             }
-        })
+        });
     } catch (error) {
         console.log(error);
+    }
+}
+
+const setAdmin = async (bot, query, userId) => {
+    try {
+        const chatId = query.message.chat.id;
+        const user = await Users.updateOne(userId, null, null, null, 1);
+
+        bot.sendMessage(chatId, `${user.username} muvofaqiyatli admin qilindi!`);
+        bot.sendMessage(userId, `Xurmatli siz ushbu botga admin qilindigiz`, {
+            reply_markup: {
+                remove_keyboard: true
+            }
+        });
+        
+    } catch(error) {
+        console.log(error)
+    }
+}
+
+
+const removeUser = async (bot, query, userId) => {
+    try {
+        const user = await Users.updateOne(userId, null, null, null, 9, 3);
+        
+        bot.sendMessage(query.message.chat.id, `${user.username} muvofaqiyatli o'chirildi ;)`);
+    } catch(error) {
+        console.log(error)
     }
 }
 
 module.exports = {
     usersPagination,
     usersWithXlsx,
+    removeUser,
+    setAdmin,
     users,
     user
 }

@@ -3,7 +3,6 @@ const path = require("path");
 
 require('dotenv').config({ path: path.join(__dirname, '../../', '.env')});
 
-console.log(process.env.PG_CONNECTION)
 const pool = new Pool({ connectionString: process.env.PG_CONNECTION });
 
 const fetch = async (SQL, ...params) => {

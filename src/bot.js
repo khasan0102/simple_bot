@@ -52,26 +52,34 @@ bot.on('message', async (msg) => {
          case 8:
             StepController.step8(bot, msg);
             break;
+         case 9:
+            StepController.step9(bot, msg);
+            break;
       }
    }
 });
 
 
 bot.on("callback_query", query => {
-   if(query.data === "leftEnd") 
-     return bot.answerCallbackQuery(query.id, `Siz eng bosh qismdasiz`);
-   
-   if(query.data === "rightEnd") 
+   if (query.data === "leftEnd")
+      return bot.answerCallbackQuery(query.id, `Siz eng bosh qismdasiz`);
+
+   if (query.data === "rightEnd")
       return bot.answerCallbackQuery(query.id, `Siz eng oxirgi qismdasiz`);
-   
-   if(query.data === 'delete') 
+
+   if (query.data === 'delete')
       return bot.deleteMessage(query.message.chat.id, query.message.message_id);
 
-   if(query.data.search('data') > 0) 
-     return AdminController.usersPagination(bot, query, query.data.slice(0, -5))
+   if (query.data.search('data') > 0)
+      return AdminController.usersPagination(bot, query, query.data.slice(0, -5));
+
+   if (query.data.search('users') > 0)
+      return AdminController.user(bot, query, query.data.slice(0, -6));
+
+   if(query.data.search('userDelete') > 0) 
+      return AdminController.removeUser(bot, query, query.data.slice(0, -11));
    
-   query.data.slice(0, -6)
-   // if(query.data.search('users'))
-   //    return AdminController.user(bot, query, )
-})
+   if(query.data.search('userAdmin') > 0)
+      return AdminController.removeUser(bot, query, query.data.slice(0, -10));
+});
 

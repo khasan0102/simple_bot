@@ -141,10 +141,9 @@ const step6 = async (bot, message) => {
                     reply_markup: buttons.backButton
                 });
             } else {
-                await Users.updateOne(
-                    chatId, null, null, null, 4,
-                    null, message.document.file_id
-                );
+                // await Users.updateOne(
+                //     chatId, null, null, null, 4, null, message.document.file_id
+                // );
 
                 bot.sendMessage(chatId, `Sizni CV qabul qilindi. Tez orada aloqaga chiqamiz!`, {
                     reply_markup: buttons.menuButton
@@ -211,6 +210,19 @@ const step8 = async (bot, message) => {
         bot.sendMessage(chatId, 'Botda nosozlik bo`ldi, Iltimos bot adminlariga murojat qiling!');
     }
 }
+
+const step9 = async (bot, message) => {
+    try {
+        bot.sendMessage(message.chat.id, `Xurmatli foydalanuvhci siz bot admin tomonlaridan block qilingansiz. Bu borasida adminlarimiz bog'laning`, {
+            reply_markup: {
+                remove_keyboard: true
+            }
+        });
+    } catch(error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
     step1,
     step2,
@@ -219,5 +231,6 @@ module.exports = {
     step5,
     step6,
     step7,
-    step8
+    step8,
+    step9
 } 

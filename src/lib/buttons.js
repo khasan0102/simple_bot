@@ -94,27 +94,27 @@ module.exports = {
         ]
     },
 
-    userButton: (user) => {
+    userButton: (userData) => {
         const topbutton = [];
         const buttons = [];
-        if (user.user_cv)
+        if (userData.user_cv)
             topbutton.push({
                 text: "CV PDF📕",
-                callback_data: user.user_cv + "/cvpdf"
+                callback_data: userData.user_cv + "/cvpdf"
             });
-        if (user.user_description)
+        if (userData.user_description)
             topbutton.push({
                 text: "CV TEXT📑",
-                callback_data: user.user_id + "/description"
+                callback_data: userData.chat_id + "/description"
             });
 
         if (topbutton.length)
             buttons.push(topbutton);
-
+            
         buttons.push([
             {
                 text: `O'chirish`,
-                callback_data: user.user_id + "/userDelete"
+                callback_data: userData.chat_id + "/userDelete"
             },
             {
                 text: "❌",
@@ -122,11 +122,11 @@ module.exports = {
             },
             {
                 text: "Admin qilish",
-                callback_data: user.user_id + "/userAdmin"
+                callback_data: userData.chat_id + "/userAdmin"
             }
         ]);
 
-        return buttons;
+        return buttons; 
     }
 }
 
