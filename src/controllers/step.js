@@ -114,7 +114,7 @@ const step5 = async (bot, message) => {
                 reply_markup: buttons.backButton
             });
         } else if (text === '⬅️ Orqaga') {
-            await Users.updateOne(user.chat_id, null, null, null, 4);
+            await Users.updateOne(message.chat.id, null, null, null, 4);
             bot.sendMessage(chatId, `Iltimos siz agar fikr bildirmoqchi bo'lsangiz yoki CV jo'natmoqchi bo'lsangiz tanlang!`, {
                 reply_markup: buttons.menuButton
             });
@@ -141,9 +141,9 @@ const step6 = async (bot, message) => {
                     reply_markup: buttons.backButton
                 });
             } else {
-                // await Users.updateOne(
-                //     chatId, null, null, null, 4, null, message.document.file_id
-                // );
+                await Users.updateOne(
+                    chatId, null, null, null, 4, null, message.document.file_id
+                );
 
                 bot.sendMessage(chatId, `Sizni CV qabul qilindi. Tez orada aloqaga chiqamiz!`, {
                     reply_markup: buttons.menuButton

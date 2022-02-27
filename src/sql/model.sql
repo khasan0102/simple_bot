@@ -9,6 +9,7 @@ CREATE TABLE users(
     role smallint default 2,
     user_cv VARCHAR(256) NULL,
     user_description TEXT
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE users ADD COLUMN user_cv VARCHAR(64);
@@ -19,7 +20,6 @@ CREATE TABLE users_comments(
     user_comment TEXT NOT NULL,
     chat_id VARCHAR(32) NOT NULL REFERENCES users(chat_id) ON DELETE CASCADE
 );
-
 
 INSERT INTO users (chat_id, username, phone_number)
 VALUES ('123009213', 'Sayfullo', '+998998616951');

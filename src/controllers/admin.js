@@ -3,6 +3,7 @@ const buttons = require("../lib/buttons");
 const XLSX = require("xlsx");
 const path = require('path');
 const fs = require("fs");
+const userMedia = {};
 
 const usersWithXlsx = async (bot, message) => {
     const chatId = message.from.id
@@ -84,7 +85,6 @@ const user = async (bot, query, chatId) => {
     try {
         const user = await Users.getOne(chatId);
 
-        console.log(user);
         const responseText = `
             Ism: ${user.username}\nYosh: ${user.age}\nTelefon: ${user.phone_number}\nCV_PDF: ${user.user_cv ? 'Bor' : "Yo'q"}\nCV_TEXT: ${user.user_description ? 'Bor' : "Yo'q"}\nKomenetlar soni: ${user.comment_count}
         `;
@@ -102,7 +102,7 @@ const user = async (bot, query, chatId) => {
 const setAdmin = async (bot, query, userId) => {
     try {
         const chatId = query.message.chat.id;
-        const user = await Users.updateOne(userId, null, null, null, 1);
+        const user = await Users.updateOne(userId, null, null, null, 0, 1);
 
         bot.sendMessage(chatId, `${user.username} muvofaqiyatli admin qilindi!`);
         bot.sendMessage(userId, `Xurmatli siz ushbu botga admin qilindigiz`, {
@@ -127,10 +127,89 @@ const removeUser = async (bot, query, userId) => {
     }
 }
 
+const userCvPDF = async (bot, query, userId) => {
+    try {
+        const user = await Users.getOne(userId);
+        
+        bot.sendDocument(query.message.chat.id, user.user_cv, {
+            caption: `<b>${user.username}ning CVsi PDF formatida!</b>`,
+            parse_mode: 'HTML'  
+        });
+    } catch (error) {
+        console.log(error);     
+    }
+}
+
+const userCvText = async (bot, query, userId) => {
+    try {
+        const user = await Users.getOne(userId);
+
+        bot.sendMessage(query.message.chat.id,
+            user.user_description + "\n\n" + `<b>${user.username}ning CVsi text formatida!</b>`,
+            {
+                parse_mode: "HTML"
+            }
+        )
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+
+const setMessage = async (bot, message) => {
+    try {
+        const chatId = message.chat.id;
+        Users.updateOne(chatId, null, null, null, 1);
+
+        bot.sendMessage(chatId, `Jo'natmoqchi bo'lga xabaringizni yozing!`, {
+            reply_markup: buttons.backButton
+        });
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+const sendMessage = async (bot, message) => {
+    try {
+        const chatId = message.chat.id;
+        if(message.text == "⬅️ Orqaga") {
+            Users.updateOne(chatId, null, null, null, 1);
+
+            bot.sendMessage(chatId, `Xabar bekor qilindi`, {
+                reply_markup: {
+                    remove_keyboard: true
+                }
+            });
+        }else {
+            if(message.media_group_id) {
+                if(userMedia[chatId]) {
+                    userMedia[chatId] = false;
+                }else {
+                    userMedia[chatId] = true;
+                    bot.sendMessage(chatId, `Userlarga hali media formatida xabar jo'natish imkoniyati qo'shilmagan!`);
+                }
+                return;
+            }else if(message.document) {
+                
+            }
+
+            await Users.updateOne(chatId, null, null, null, 0)
+            bot.sendMessage(chatId, `Sizning barcha xabaringiz barcha userlarga yuborilmoqda ;)`);
+        }
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+
 module.exports = {
     usersPagination,
     usersWithXlsx,
+    sendMessage,
+    setMessage,
     removeUser,
+    userCvText,
+    userCvPDF,
     setAdmin,
     users,
     user
