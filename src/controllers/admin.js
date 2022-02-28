@@ -1,5 +1,6 @@
 const Users = require("../models/Users");
 const buttons = require("../lib/buttons");
+const functions = require("../lib/functions");
 const XLSX = require("xlsx");
 const path = require('path');
 const fs = require("fs");
@@ -189,8 +190,50 @@ const sendMessage = async (bot, message) => {
                     bot.sendMessage(chatId, `Userlarga hali media formatida xabar jo'natish imkoniyati qo'shilmagan!`);
                 }
                 return;
-            }else if(message.document) {
-                
+            }else if(message.poll) {
+                bot.sendMessage(chatId, `Siz bunday xabar jo'nata olmaysiz`);
+            }else {
+                const allCount = await Users.allCount();
+                const pages = Math.ceil(allCount / 30);
+                let timeOut = 0;
+                const caption = message.caption ? functions.makeResponse(
+                    message.caption, message.caption_entities
+                ) : undefined;
+                const text = message.text ? functions.makeResponse(
+                    message.text, message.entities
+                ) : null
+
+                for(let i = 0; i < pages; i++) {
+                    const users = await Users.getAll(i * 30, 30);
+
+                    setTimeout(() => {
+                        for(let user of users) {
+                            if(message.document) {
+                                bot.sendDocument(user.chat_id, message.document.file_id, {
+                                    caption
+                                })
+                            }else if(message.photo) {
+                                bot.sendPhoto(user.chat_id, 
+                                    msg.photo[msg.photo.length - 1].file_id,{
+                                        caption
+                                    }
+                                );
+                            } else if(message.video) {
+                                bot.sendVideo(user.chat_id, message.video.file_id, {
+                                    caption
+                                })
+                            } else if(message.audio) {
+                                bot.sendAudio(user.chat_id, message.audio.file_id, {
+                                    caption
+                                })
+                            }else if(message.text) {
+                                bot.sendMessage(user.chat_id, text);
+                            }
+                        }
+                    }, timeOut);
+
+                    timeOut += 1000;
+                }
             }
 
             await Users.updateOne(chatId, null, null, null, 0)

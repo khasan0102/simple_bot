@@ -15,10 +15,6 @@ bot.on('message', async (msg) => {
    const chatId = msg.from.id;
    let user = await Users.getOne(chatId);
 
-   bot.sendMessage(chatId, makeResponse(msg.text, msg.entities), {
-      parse_mode: "HTML"
-   });
-
    if (!user) {
       user = await Users.create(chatId);
       bot.sendMessage(chatId, 'Assalomu alaykum xurmatli foydalanuvchi, botga xush kelibsiz. Iltimos ismingizni kiriting!')

@@ -1,6 +1,6 @@
 module.exports.makeResponse = (text, entities) => {
     let responseText = '';
-    entities = entities || []
+    entities = entities || [];
     let startText = "";
     let endText = "";
 
