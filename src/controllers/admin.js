@@ -193,8 +193,9 @@ const sendMessage = async (bot, message) => {
             }else if(message.poll) {
                 bot.sendMessage(chatId, `Siz bunday xabar jo'nata olmaysiz`);
             }else {
-                const allCount = await Users.allCount();
-                const pages = Math.ceil(allCount / 30);
+                const { count } = await Users.allCount();
+                const pages = Math.ceil(count / 30);
+                
                 let timeOut = 0;
                 const caption = message.caption ? functions.makeResponse(
                     message.caption, message.caption_entities
@@ -205,7 +206,7 @@ const sendMessage = async (bot, message) => {
 
                 for(let i = 0; i < pages; i++) {
                     const users = await Users.getAll(i * 30, 30);
-
+                    console.log(users)
                     setTimeout(() => {
                         for(let user of users) {
                             if(message.document) {
@@ -214,7 +215,7 @@ const sendMessage = async (bot, message) => {
                                 })
                             }else if(message.photo) {
                                 bot.sendPhoto(user.chat_id, 
-                                    msg.photo[msg.photo.length - 1].file_id,{
+                                    message.photo[message.photo.length - 1].file_id,{
                                         caption
                                     }
                                 );
@@ -236,8 +237,12 @@ const sendMessage = async (bot, message) => {
                 }
             }
 
-            await Users.updateOne(chatId, null, null, null, 0)
-            bot.sendMessage(chatId, `Sizning barcha xabaringiz barcha userlarga yuborilmoqda ;)`);
+            await Users.updateOne(chatId, null, null, null, 0);
+            bot.sendMessage(chatId, `Sizning barcha xabaringiz barcha userlarga yuborilmoqda ;)`, {
+                reply_markup: {
+                    remove_keyboard: true
+                }
+            });
         }
     } catch(error) {
         console.log(error);
