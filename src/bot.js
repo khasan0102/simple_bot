@@ -21,7 +21,7 @@ bot.on('message', async (msg) => {
    } else if (user.role === 1) {
       if(user.step === 0) {
          switch (msg.text) {
-            case '/users_xls':
+            case '/users_exel':
                AdminController.usersWithXlsx(bot, msg);
                break;
             case '/users':
@@ -29,6 +29,9 @@ bot.on('message', async (msg) => {
                break;
             case '/sendMessage':
                AdminController.setMessage(bot, msg);
+            case '/help':
+               AdminController.help(bot, msg);
+               break;
          }
       }else {
          switch(user.step) {
@@ -99,5 +102,22 @@ bot.on("callback_query", query => {
    if (query.data.search('cvText') > 0)
       return AdminController.userCvText(bot, query, query.data.slice(0, -7));
    
+   if(query.data.search('userComments') > 0)
+      return AdminController.comments(bot, query, query.data.slice(0, -13), 0, true);
+   
+   if(query.data.search('cData') > 0) {
+      const data = query.data.slice(0, -6);
+      const search = data.search('/');
+      const userId = data.slice(search + 1, data.length);
+      const page = data.slice(0, search);
+      
+      return AdminController.comments(bot, query, userId, +page)
+   }
+   
+   if(query.data.search('comment') > 0)
+      return AdminController.getComment(bot, query, query.data.slice(0, -8));
+
+   if(query.data.search('delComment') > 0)
+      return AdminController.deleteComment(bot, query, query.data.slice(0, -11))
 });
 

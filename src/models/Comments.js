@@ -1,5 +1,5 @@
-const { fetch } = require("../lib/postgres");
-const COMMENT = `
+const { fetch, fetchAll } = require("../lib/postgres");
+const COMMENTS = `
     SELECT 
         u.username,
         u.phone_number,
@@ -9,7 +9,19 @@ const COMMENT = `
     WHERE 
         CASE 
             WHEN length($1) > 0 THEN u.chat_id = $1
-        END;
+        END
+    ORDER BY c.created_at DESC
+    OFFSET $2 ROWS FETCH FIRST $3 ROWS ONLY;
+`;
+
+const COMMENT = `
+    SELECT 
+        u.username,
+        u.phone_number,
+        c.*
+    FROM users_comments c
+    INNER JOIN users u ON u.chat_id = c.chat_id
+    WHERE c.user_comment_id = $1
 `;
 
 const CREATE = `
@@ -18,7 +30,29 @@ const CREATE = `
     RETURNING *;
 `;
 
+const ALL_COUNT = `
+    SELECT 
+        COUNT(*)
+    FROM users_comments c
+    WHERE c.chat_id = $1;
+`;
+
+const DELETE = `
+    DELETE FROM users_comments c
+    WHERE c.user_comment_id = $1
+    RETURNING *
+`
+
 const create = (comment , chat_id) =>  fetch(CREATE, comment, chat_id);
+const getAll = (userId = "", page, count) => fetchAll(COMMENTS, userId, page, count);
+const getOne = (commentId) => fetch(COMMENT, commentId);
+const allCount = (userId) => fetch(ALL_COUNT, userId);
+const deleteOne = (commentId) => fetch(DELETE, commentId)
+
 module.exports = {
-    create
-}
+    create,
+    getAll,
+    getOne,
+    allCount,
+    deleteOne
+};

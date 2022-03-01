@@ -24,7 +24,7 @@ const GET_USERS = `
             u.chat_id
     FROM users u
     WHERE u.phone_number IS NOT NULL AND u.role = 2
-    ORDER BY u.role DESC
+    ORDER BY u.created_at DESC
     OFFSET $1 ROWS FETCH FIRST $2 ROWS ONLY
 `;
 
