@@ -94,7 +94,7 @@ bot.on("callback_query", query => {
       return AdminController.removeUser(bot, query, query.data.slice(0, -11));
 
    if (query.data.search('userAdmin') > 0)
-      return AdminController.removeUser(bot, query, query.data.slice(0, -10));
+      return AdminController.setAdmin(bot, query, query.data.slice(0, -10));
 
    if (query.data.search('cvPDF') > 0)
       return AdminController.userCvPDF(bot, query, query.data.slice(0, -6));
